@@ -59,17 +59,24 @@ class RegExpTableCellRenderer : DefaultTableCellRenderer() {
   ): Component {
     val psiFile =
       factory.createFileFromText(
-        /* language = */ RegExpFileType.INSTANCE.language,
-        /* text = */ value as String
+        /* language = */
+        RegExpFileType.INSTANCE.language,
+        /* text = */
+        value as String
       )
     val editorTextField: EditorTextField
 
     editorTextField = object : EditorTextField(
-      /* document = */ documentManager.getDocument(psiFile),
-      /* project = */ project,
-      /* fileType = */ RegExpFileType.INSTANCE,
-      /* isViewer = */ true,
-      /* oneLineMode = */ true
+      /* document = */
+      documentManager.getDocument(psiFile),
+      /* project = */
+      project,
+      /* fileType = */
+      RegExpFileType.INSTANCE,
+      /* isViewer = */
+      true,
+      /* oneLineMode = */
+      true
     ) {
       override fun shouldHaveBorder(): Boolean = false
     }
@@ -92,5 +99,4 @@ class RegExpTableCellRenderer : DefaultTableCellRenderer() {
     }
     return editorTextField
   }
-
 }

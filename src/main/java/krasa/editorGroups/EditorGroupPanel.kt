@@ -226,8 +226,16 @@ class EditorGroupPanel(
   }
 
   fun refreshHeight() {
-    val tabHeight = getPanelHeight()
-    this.preferredSize = Dimension(0, tabHeight)
+    when (this.currentTabPlacement) {
+      SwingConstants.LEFT -> {
+        val tabWidth = getPanelWidth()
+        this.preferredSize = Dimension(tabWidth, 0)
+      }
+      else -> {
+        val tabHeight = getPanelHeight()
+        this.preferredSize = Dimension(0, tabHeight)
+      }
+    }
   }
 
   fun getPanelHeight(): Int = when {
@@ -235,10 +243,16 @@ class EditorGroupPanel(
     else                                        -> EditorGroupsUI.tabHeight()
   }
 
+  fun getPanelWidth(): Int = when {
+    EditorGroupsSettings.instance.isCompactTabs -> 180 // Compact width for left panel
+    else                                        -> 220 // Normal width for left panel
+  }
+
   internal fun updateTabPlacement() {
     when (this.currentTabPlacement) {
       SwingConstants.TOP    -> tabs.setTabsPosition(EditorGroupsTabsPosition.TOP)
       SwingConstants.BOTTOM -> tabs.setTabsPosition(EditorGroupsTabsPosition.BOTTOM)
+      SwingConstants.LEFT   -> tabs.setTabsPosition(EditorGroupsTabsPosition.LEFT)
     }
   }
 

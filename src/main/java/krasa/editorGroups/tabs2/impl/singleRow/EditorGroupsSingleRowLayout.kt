@@ -4,6 +4,7 @@ import krasa.editorGroups.tabs2.EditorGroupsTabsPosition
 import krasa.editorGroups.tabs2.impl.EditorGroupsTabLayout
 import krasa.editorGroups.tabs2.impl.KrTabsImpl
 import krasa.editorGroups.tabs2.impl.singleRow.EditorGroupsSingleRowLayoutStrategy.Bottom
+import krasa.editorGroups.tabs2.impl.singleRow.EditorGroupsSingleRowLayoutStrategy.Left
 import krasa.editorGroups.tabs2.impl.singleRow.EditorGroupsSingleRowLayoutStrategy.Top
 import krasa.editorGroups.tabs2.label.EditorGroupTabInfo
 import krasa.editorGroups.tabs2.label.EditorGroupTabLabel
@@ -19,11 +20,13 @@ abstract class EditorGroupsSingleRowLayout(
 
   private val topStrategy: EditorGroupsSingleRowLayoutStrategy = Top(this)
   private val bottomStrategy: EditorGroupsSingleRowLayoutStrategy = Bottom(this)
+  private val leftStrategy: EditorGroupsSingleRowLayoutStrategy = Left(this)
 
   val strategy: EditorGroupsSingleRowLayoutStrategy
     get() = when (tabs.getPresentation().tabsPosition) {
       EditorGroupsTabsPosition.TOP    -> topStrategy
       EditorGroupsTabsPosition.BOTTOM -> bottomStrategy
+      EditorGroupsTabsPosition.LEFT   -> leftStrategy
       else                            -> topStrategy
     }
 

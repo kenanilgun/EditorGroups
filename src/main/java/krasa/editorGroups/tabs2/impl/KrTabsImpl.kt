@@ -506,6 +506,7 @@ open class KrTabsImpl(
     return when (tabsPosition) {
       EditorGroupsTabsPosition.TOP    -> y <= area.height
       EditorGroupsTabsPosition.BOTTOM -> y >= height - area.height
+      EditorGroupsTabsPosition.LEFT   -> y <= area.height
       else                            -> false
     }
   }
@@ -522,6 +523,7 @@ open class KrTabsImpl(
   private fun getScrollBarBounds(): Rectangle = when (tabsPosition) {
     EditorGroupsTabsPosition.TOP    -> Rectangle(0, 1, width, SCROLL_BAR_THICKNESS)
     EditorGroupsTabsPosition.BOTTOM -> Rectangle(0, height - SCROLL_BAR_THICKNESS, width, SCROLL_BAR_THICKNESS)
+    EditorGroupsTabsPosition.LEFT   -> Rectangle(1, 0, SCROLL_BAR_THICKNESS, height)
     else                            -> Rectangle()
   }
 

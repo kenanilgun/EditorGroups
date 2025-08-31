@@ -236,7 +236,7 @@ class EditorGroupsSettings : SimplePersistentStateComponent<EditorGroupsSettings
   var tabsPlacement: Int
     get() = state.tabsPlacement
     set(value) {
-      state.tabsPlacement = value.coerceIn(SwingConstants.TOP, SwingConstants.BOTTOM)
+      state.tabsPlacement = value.coerceIn(SwingConstants.TOP, SwingConstants.LEFT)
     }
 
   @EditorGroupSetting([EditorGroupSetting.Category.UI, EditorGroupSetting.Category.TABS])

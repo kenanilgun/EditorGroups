@@ -35,6 +35,7 @@ class EditorGroupsDefaultTabPainterAdapter : EditorGroupsTabPainterAdapter {
 
       else       -> {
         if (isHovered && tabs.tabsPosition == EditorGroupsTabsPosition.TOP) rect.height -= magicOffset
+        if (isHovered && tabs.tabsPosition == EditorGroupsTabsPosition.LEFT) rect.width -= magicOffset
 
         tabPainter.paintTab(
           position = tabs.position,

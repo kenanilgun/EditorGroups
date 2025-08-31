@@ -6,15 +6,20 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.impl.text.TextEditorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.editor.impl.EditorImpl
+import com.intellij.openapi.wm.ToolWindowManager
 import krasa.editorGroups.EditorGroupManager
 import krasa.editorGroups.EditorGroupPanel
 import krasa.editorGroups.model.SwitchRequest
 import krasa.editorGroups.settings.EditorGroupsSettings
 import krasa.editorGroups.settings.EditorGroupsSettings.Companion.TOPIC
 import krasa.editorGroups.support.unwrapPreview
+import krasa.editorGroups.tools.EditorGroupsToolWindowFactory
 import javax.swing.SwingConstants.BOTTOM
+import javax.swing.SwingConstants.LEFT
 import javax.swing.SwingConstants.TOP
 
 @Service(Service.Level.APP)
@@ -76,6 +81,19 @@ class EditorGroupsPanelBuilder {
     when (editorTabPlacement) {
       TOP    -> manager.addTopComponent(fileEditor, panel.root)
       BOTTOM -> manager.addBottomComponent(fileEditor, panel.root)
+      LEFT   -> {
+        // For LEFT placement, show the Tools Window instead of adding panel to editor
+        val toolWindowManager = ToolWindowManager.getInstance(project)
+        val toolWindow = toolWindowManager.getToolWindow("EditorGroups")
+        if (toolWindow != null) {
+          toolWindow.show()
+          // Refresh the content to ensure it's populated
+          val toolWindowContent = EditorGroupsToolWindowFactory.getToolWindowContent(project)
+          toolWindowContent?.refresh()
+        }
+        // Don't add panel to editor for LEFT placement
+        return
+      }
       else   -> thisLogger().warn("Unsupported tab placement: $editorTabPlacement")
     }
     panel.postConstruct()
@@ -92,13 +110,33 @@ class EditorGroupsPanelBuilder {
               else                                              -> {
                 panel.currentTabPlacement = config.tabsPlacement
 
-                // Remove panels on top and bottom and readd them in the new position
+                // Remove panels on top, bottom and left and readd them in the new position
                 manager.removeTopComponent(fileEditor, panel.root)
                 manager.removeBottomComponent(fileEditor, panel.root)
+                
+                // For LEFT placement, handle Tools Window visibility
+                if (panel.currentTabPlacement == LEFT) {
+                  val toolWindowManager = ToolWindowManager.getInstance(project)
+                  val toolWindow = toolWindowManager.getToolWindow("EditorGroups")
+                  if (toolWindow != null) {
+                    toolWindow.hide()
+                  }
+                }
 
                 when (panel.currentTabPlacement) {
                   TOP    -> manager.addTopComponent(fileEditor, panel.root)
                   BOTTOM -> manager.addBottomComponent(fileEditor, panel.root)
+                  LEFT   -> {
+                    // For LEFT placement, show the Tools Window
+                    val toolWindowManager = ToolWindowManager.getInstance(project)
+                    val toolWindow = toolWindowManager.getToolWindow("EditorGroups")
+                    if (toolWindow != null) {
+                      toolWindow.show()
+                      // Refresh the content
+                      val toolWindowContent = EditorGroupsToolWindowFactory.getToolWindowContent(project)
+                      toolWindowContent?.refresh()
+                    }
+                  }
                   else   -> thisLogger().warn("Unsupported tab placement: $panel.currentTabPlacement")
                 }
 
@@ -109,6 +147,8 @@ class EditorGroupsPanelBuilder {
         }
       )
   }
+
+
 
   companion object {
     @JvmStatic

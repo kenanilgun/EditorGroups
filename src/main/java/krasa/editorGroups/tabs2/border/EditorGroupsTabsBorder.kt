@@ -43,6 +43,20 @@ class EditorGroupsTabsBorder(val tabs: KrTabsImpl) : Border {
           to = Point(x + width, curY)
         )
       }
+
+      EditorGroupsTabsPosition.LEFT   -> {
+        val highlightThickness = thickness
+        val startX = firstLabel.x - highlightThickness
+        val lastRow = 1
+
+        val xl = lastRow * tabs.headerFitSize!!.width + startX
+        tabs.tabPainter.paintBorderLine(
+          g = g,
+          thickness = thickness,
+          from = Point(xl, y),
+          to = Point(xl, y + height)
+        )
+      }
     }
 
     val selectedLabel = tabs.selectedLabel ?: return

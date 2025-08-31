@@ -2,6 +2,21 @@
 
 ## Changelog
 
+## 3.2.2
+
+### Features
+
+- Implement Tools Window for LEFT panel position with tree-based file grouping
+- Add dynamic refresh mechanism for Tools Window content
+- Improve LEFT panel visibility and content management
+
+## 3.2.1
+
+### Features
+
+- Add LEFT panel position option for Editor Groups tabs panel
+- Support for vertical tab layout in left panel position
+
 ## 3.1.0
 
 ### Fixes

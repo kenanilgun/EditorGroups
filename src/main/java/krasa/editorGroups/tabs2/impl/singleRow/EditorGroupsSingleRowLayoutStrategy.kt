@@ -222,6 +222,138 @@ abstract class EditorGroupsSingleRowLayoutStrategy protected constructor(myLayou
     }
   }
 
+  internal abstract class Vertical protected constructor(layout: EditorGroupsSingleRowLayout) :
+    EditorGroupsSingleRowLayoutStrategy(layout) {
+    override val isToCenterTextWhenStretched: Boolean
+      get() = true
+
+    override val moreRectAxisSize: Int
+      get() = myTabs.moreToolbarPreferredSize.height
+
+    override val entryPointAxisSize: Int
+      get() = myTabs.entryPointPreferredSize.height
+
+    override val additionalLength: Int
+      get() = 0
+
+    override fun getToFitLength(passInfo: EditorGroupsSingleRowPassInfo?): Int {
+      if (passInfo == null) return 0
+
+      var length = myTabs.height - passInfo.insets!!.top - passInfo.insets!!.bottom
+
+      val hToolbar = passInfo.hToolbar?.get()
+      if (hToolbar != null) length -= hToolbar.minimumSize.height
+
+      length += getStartPosition(passInfo)
+
+      val entryPointHeight = myTabs.entryPointPreferredSize.height
+      val toolbarInsets = myTabs.actionsInsets
+      val insets = toolbarInsets.top + toolbarInsets.bottom
+
+      length -= (entryPointHeight + insets * sign(entryPointHeight.toDouble())).toInt()
+
+      return length
+    }
+
+    override fun getLengthIncrement(labelPrefSize: Dimension): Int = max(labelPrefSize.height, MIN_TAB_WIDTH)
+
+    override fun getMinPosition(bounds: Rectangle): Int = bounds.y
+
+    override fun getMaxPosition(bounds: Rectangle): Int = bounds.maxY.toInt()
+
+    override fun getFixedFitLength(passInfo: EditorGroupsSingleRowPassInfo?): Int = myTabs.headerFitSize!!.width
+
+    override fun getLayoutRect(
+      passInfo: EditorGroupsSingleRowPassInfo,
+      position: Int,
+      fixedPos: Int,
+      length: Int,
+      fixedFitLength: Int
+    ): Rectangle = Rectangle(
+      /* x = */
+      fixedPos,
+      /* y = */
+      position,
+      /* width = */
+      fixedFitLength,
+      /* height = */
+      length
+    )
+
+    override fun getStartPosition(passInfo: EditorGroupsSingleRowPassInfo): Int = passInfo.insets!!.top
+
+    override fun drawPartialOverflowTabs(): Boolean = true
+  }
+
+  internal class Left(layout: EditorGroupsSingleRowLayout) : Vertical(layout) {
+
+    override fun getFixedPosition(passInfo: EditorGroupsSingleRowPassInfo): Int = passInfo.insets!!.left
+
+    override fun getEntryPointRect(passInfo: EditorGroupsSingleRowPassInfo): Rectangle {
+      val y: Int = passInfo.layoutSize.height - myTabs.actionsInsets.bottom - passInfo.entryPointAxisSize
+      return Rectangle(
+        1,
+        y,
+        myTabs.headerFitSize!!.width,
+        passInfo.entryPointAxisSize
+      )
+    }
+
+    override fun getMoreRect(passInfo: EditorGroupsSingleRowPassInfo): Rectangle {
+      var y: Int = passInfo.layoutSize.height - myTabs.actionsInsets.bottom - passInfo.moreRectAxisSize
+      y -= passInfo.entryPointAxisSize
+
+      return Rectangle(
+        1,
+        y,
+        myTabs.headerFitSize!!.width,
+        passInfo.moreRectAxisSize
+      )
+    }
+
+    override fun layoutComp(passInfo: EditorGroupsSingleRowPassInfo) {
+      val y = 0
+      val hToolbar = passInfo.hToolbar?.get()
+      val hToolbarWidth = when {
+        hToolbar != null -> hToolbar.preferredSize.width
+        else             -> 0
+      }
+
+      val x: Int = myTabs.headerFitSize!!.width + max(hToolbarWidth, 0)
+
+      val comp = passInfo.component!!.get()
+
+      when {
+        hToolbar != null -> {
+          val componentBounds = myTabs.layoutComp(
+            componentX = x,
+            componentY = y,
+            component = comp!!,
+            deltaWidth = 0,
+            deltaHeight = 0
+          )
+
+          val toolbarWidth = hToolbar.preferredSize.width
+          myTabs.layout(
+            component = hToolbar,
+            x = componentBounds.x - toolbarWidth,
+            y = componentBounds.y,
+            width = toolbarWidth,
+            height = componentBounds.height
+          )
+        }
+
+        else             -> myTabs.layoutComp(
+          componentX = x,
+          componentY = y,
+          component = comp!!,
+          deltaWidth = 0,
+          deltaHeight = 0
+        )
+      }
+    }
+  }
+
   companion object {
     private const val MIN_TAB_WIDTH = 50
   }

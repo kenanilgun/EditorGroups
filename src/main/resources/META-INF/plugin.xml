@@ -118,6 +118,14 @@
 
         <!-- Theme -->
         <themeMetadataProvider path="/themes/metadata/EditorGroups.themeMetadata.json"/>
+
+        <!-- Tools Window -->
+        <toolWindow id="EditorGroups" 
+                    anchor="left" 
+                    factoryClass="krasa.editorGroups.tools.EditorGroupsToolWindowFactory"
+                    icon="/icons/pluginIcon.svg"
+                    canCloseContent="true"
+                    canWorkInDumbMode="true"/>
     </extensions>
 
     <!--suppress PluginXmlValidity -->

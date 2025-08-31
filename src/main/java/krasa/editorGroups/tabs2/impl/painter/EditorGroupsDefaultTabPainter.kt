@@ -130,6 +130,7 @@ open class EditorGroupsDefaultTabPainter(private val theme: EditorGroupTabTheme 
 
   private fun underlineRectangle(position: EditorGroupsTabsPosition, rect: Rectangle, thickness: Int): Rectangle = when (position) {
     EditorGroupsTabsPosition.BOTTOM -> Rectangle(rect.x, rect.y, rect.width, thickness)
+    EditorGroupsTabsPosition.LEFT   -> Rectangle(rect.x, rect.y, thickness, rect.height)
     else                            -> Rectangle(rect.x, rect.y + rect.height - thickness, rect.width, thickness)
   }
 }

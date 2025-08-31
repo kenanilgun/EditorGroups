@@ -105,10 +105,11 @@ internal class EditorSettingsConfigurable : BoundSearchableConfigurable(
 
       presentationGroup = collapsibleGroup(message("settings.features.presentation.title")) {
         row(message("EditorGroupsSettings.tabsPlacement.text")) {
-          segmentedButton(listOf(SwingConstants.TOP, SwingConstants.BOTTOM)) {
+          segmentedButton(listOf(SwingConstants.TOP, SwingConstants.BOTTOM, SwingConstants.LEFT)) {
             text = when (it) {
               SwingConstants.TOP    -> message("EditorGroupsSettings.tabsPlacementTop.text")
               SwingConstants.BOTTOM -> message("EditorGroupsSettings.tabsPlacementBottom.text")
+              SwingConstants.LEFT   -> message("EditorGroupsSettings.tabsPlacementLeft.text")
               else                  -> message("EditorGroupsSettings.tabsPlacementTop.text")
             }
           }
